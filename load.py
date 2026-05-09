@@ -12,4 +12,4 @@ if __name__ == "__main__":
 
     # Predict value
     Y = loaded_model.predict([[19.0, 2.0, 0.0, 0.66, 23.0, 0.0, 0.0]])
-    print(Y)
+    print(Y) # Value expected: 0
