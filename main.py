@@ -9,18 +9,27 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
-def load_dataset(kaggle_path: str):
+def download_dataset(kaggle_path: str):
     """
-    Download a dataset from kaggle and return a dataframe
+    Download a dataset from KaggleHub and return the path
     """
     path = kagglehub.dataset_download(kaggle_path)
+    return path
+
+def load_dataset(path: str):
+    '''
+    Load the dataset into a dataframe
+    '''
     csv_file = os.path.join(path, os.listdir(path)[0])
     df = pd.read_csv(csv_file)
     return df
 
 if __name__ == "__main__":
+    # Download data
+    path = download_dataset("ssssws/spam-email-detection-dataset-clean-and-ml-ready")
+
     # Load data
-    df = load_dataset("ssssws/spam-email-detection-dataset-clean-and-ml-ready")
+    df = load_dataset(path)
     print(df.head(5))
 
     # Split train, test
