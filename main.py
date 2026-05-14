@@ -3,26 +3,41 @@ import mlflow
 import kagglehub
 import pandas as pd
 
+from typing import List, Tuple
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
-def download_dataset(kaggle_path: str):
+def download_dataset(kaggle_path: str) -> str:
     """
     Download a dataset from KaggleHub and return the path
     """
     path = kagglehub.dataset_download(kaggle_path)
     return path
 
-def load_dataset(path: str):
+def load_dataset(path: str) -> pd.DataFrame:
     '''
     Load the dataset into a dataframe
     '''
     csv_file = os.path.join(path, os.listdir(path)[0])
     df = pd.read_csv(csv_file)
     return df
+
+def train_test(df: pd.DataFrame, 
+               features: List[str], 
+               label: str, 
+               train_size: float, 
+               random_state: int
+               ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    '''
+    Split a dataframe into test and train sets.
+    '''
+    X = df[features]
+    Y = df[label]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size = train_size, random_state = random_state)
+    return X_train, X_test, Y_train, Y_test
 
 if __name__ == "__main__":
     # Download data
@@ -36,10 +51,9 @@ if __name__ == "__main__":
     features = ["num_words", "num_links", "num_exclamation_marks", "sender_reputation_score",
                 "num_recipients", "contains_money_terms", "contains_urgency_terms"]
     
-    X = df[features]
-    Y = df["label"]
+    label = "label"
 
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size = 0.7, random_state = 290)
+    X_train, X_test, Y_train, Y_test = train_test(df, features, label, train_size = 0.7, random_state = 290)
 
     # Define models
 
