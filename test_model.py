@@ -1,1 +1,1 @@
-import pywin32_testutil
+#Add test accuracy >= 80%
