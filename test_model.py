@@ -29,7 +29,9 @@ def test_model_accuracy():
     model_uri = "models:/{}/{}".format(model_name, model_v)
     model = mlflow.sklearn.load_model(model_uri)
 
+    # Predictions and accuracy
     Y_pred = model.predict(X_test)
     acc = accuracy_score(Y_test, Y_pred)
 
+    # Validation
     assert acc >= 0.85, "Model accuracy too low: {:.2f}".format(acc)
