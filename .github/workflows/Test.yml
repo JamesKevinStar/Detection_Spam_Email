@@ -1,1 +1,18 @@
-#GitHub Actions
+name: Test
+
+on:
+    push:
+        branches: [main]
+    
+jobs:
+    test:
+        runs-on: ubuntu-24.04
+        steps:
+            - name: Aviso
+              run: echo "GitHub Actions"
+
+            - name: Ver fecha
+              run: date
+
+            - name: Ver archivos disponibles
+              run: ls -la
