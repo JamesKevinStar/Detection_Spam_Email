@@ -1,18 +1,28 @@
 name: Test
 
 on:
-    push:
-        branches: [main]
+  push:
+    branches: [main]
     
 jobs:
-    test:
-        runs-on: ubuntu-24.04
-        steps:
-            - name: Aviso
-              run: echo "GitHub Actions"
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Aviso
+        run: echo "GitHub Actions"
 
-            - name: Ver fecha
-              run: date
+      - name: Ver Fecha
+        run: date
 
-            - name: Ver archivos disponibles
-              run: ls -la
+      - name: Ver Archivos
+        run: ls -la
+
+  repo_files:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Descargar Código
+        uses: actions/checkout@v6
+
+      - name: Ver Archivos
+        run: ls -la
+
