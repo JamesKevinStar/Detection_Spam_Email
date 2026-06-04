@@ -1,0 +1,13 @@
+name: manual_test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  date_run:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Obtener Fecha
+        run: date
+
+    
