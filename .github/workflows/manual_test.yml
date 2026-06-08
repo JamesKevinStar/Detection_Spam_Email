@@ -28,7 +28,7 @@ on:
 
 
 jobs:
-  date_run:
+  manual:
     runs-on: ubuntu-24.04
     steps:
       - name: Mostrar todos los inputs

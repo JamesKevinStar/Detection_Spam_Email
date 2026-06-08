@@ -1,0 +1,12 @@
+name: schedule_test
+
+on:
+  schedule:
+    - cron: "0 0 * * FRI"
+
+jobs:
+  schedule:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Saludar
+        run: echo "Hoy es Viernes!!!!"
