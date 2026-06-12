@@ -3,6 +3,7 @@ name: schedule_test
 on:
   schedule:
     - cron: "0 0 * * FRI"
+    - cron: "0 12 * * MON"
 
 jobs:
   schedule:
