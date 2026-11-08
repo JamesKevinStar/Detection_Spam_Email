@@ -107,7 +107,7 @@ if __name__ == "__main__":
 
     reports = [report_pr, report_lr]
 
-    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:8080")
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:8080") # Keeps the default value, allowing to change later if needed
     mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment("Spam Detection")
 
