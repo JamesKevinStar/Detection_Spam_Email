@@ -4,6 +4,7 @@ import kagglehub
 import pandas as pd
 
 from typing import List, Tuple
+from mlflow import MlflowClient
 from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import PolynomialFeatures
@@ -106,7 +107,8 @@ if __name__ == "__main__":
 
     reports = [report_pr, report_lr]
 
-    mlflow.set_tracking_uri(uri = "http://127.0.0.1:8080/")
+    tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:8080")
+    mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment("Spam Detection")
 
     for i, items in enumerate(models):
