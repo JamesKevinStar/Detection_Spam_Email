@@ -59,61 +59,43 @@ if __name__ == "__main__":
     # Define models
 
     # Polynomial Regression:
-    pr = PolynomialFeatures(degree = 2)
-
     params_pr = {
         "degree" : 2,
     }
-
-    pr = Pipeline([
-        ("poly_features", PolynomialFeatures(degree = params_pr["degree"], include_bias = False)),
-        ("lin_reg", LogisticRegression())
-    ])
-    pr.fit(X_train, Y_train)
-
-    predict_pr = pr.predict(X_test)
-    report_pr = classification_report(Y_test, predict_pr, output_dict = True)
-
+    
     # Logistic Regression:
     params_lr = {
         "C" : 0.02,
         "solver" : "lbfgs"
     }
 
-    lr = LogisticRegression(**params_lr)
-    lr.fit(X_train, Y_train)
-
-    predict_lr = lr.predict(X_test)
-    report_lr = classification_report(Y_test, predict_lr, output_dict = True)
-
     # MLflow
     models = [
         (
             "Polynomial Regresion",
             Pipeline([
-                ("poly_features", PolynomialFeatures(degree = params_pr["degree"], include_bias = False)),
+                ("poly_features", PolynomialFeatures(
+                    degree = params_pr["degree"], 
+                    include_bias = False
+                )),
                 ("lin_reg", LogisticRegression())
-            ]),
-            (X_train, Y_train),
-            (X_test, Y_test)
+            ])
         ),
         (
             "Logistic Regresion",
-            LogisticRegression(C = 0.02, solver = "lbfgs"),
-            (X_train, Y_train),
-            (X_test, Y_test)
+            LogisticRegression(C = params_lr["C"], solver = params_lr["solver"])
         )
     ]
 
-    reports = [report_pr, report_lr]
 
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:8080") # Keeps the default value, allowing to change later if needed
     mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment("Spam Detection")
 
-    for model_name, model, _, _ in models:
+    for model_name, model in models:
         with mlflow.start_run(run_name = model_name) as run:
             model.fit(X_train, Y_train)
+            
             predictions = model.predict(X_test)
             report = classification_report(
                 Y_test,
