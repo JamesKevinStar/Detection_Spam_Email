@@ -111,13 +111,16 @@ if __name__ == "__main__":
     mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment("Spam Detection")
 
-    for i, items in enumerate(models):
-        model_name = items[0]
-        model = items[1]
-        report = reports[i]
+    for model_name, model, _, _ in models:
+        with mlflow.start_run(run_name = model_name) as run:
+            model.fit(X_train, Y_train)
+            predictions = model.predict(X_test)
+            report = classification_report(
+                Y_test,
+                predictions,
+                output_dict = True,
+            )
 
-        with mlflow.start_run(run_name = model_name):
-            model.fit(X_train, Y_train) # Load trained models
             mlflow.log_param("model_name", model_name)
             mlflow.log_metric("accuracy", report["accuracy"])
             mlflow.log_metric("recall_class_0", report["0"]["recall"])
@@ -126,4 +129,17 @@ if __name__ == "__main__":
             mlflow.log_metric("f1_class_0", report["0"]["f1-score"])
             mlflow.log_metric("f1_class_1", report["1"]["f1-score"])
             mlflow.log_metric("f1", report["weighted avg"]["f1-score"])
-            mlflow.sklearn.log_model(model, model_name)
+
+            mlflow.sklearn.log_model(model, artifact_path = "model")
+
+            if model_name == "Polynomial Regresion":
+                registered_model = mlflow.register_model(
+                    model_uri = f"runs:/{run.info.run_id}/model",
+                    name = "spam-email-classifier",
+                )
+
+                MlflowClient().set_registered_model_alias(
+                    name = "spam-email-classifier",
+                    alias = "champion",
+                    version = registered_model.version,
+                )
