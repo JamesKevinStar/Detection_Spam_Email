@@ -3,3 +3,6 @@ pandas
 scikit-learn
 mlflow
 pytest
+fastapi
+uvicorn
+httpx
