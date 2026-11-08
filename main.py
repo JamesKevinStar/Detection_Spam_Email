@@ -95,7 +95,7 @@ if __name__ == "__main__":
     for model_name, model in models:
         with mlflow.start_run(run_name = model_name) as run:
             model.fit(X_train, Y_train)
-            
+
             predictions = model.predict(X_test)
             report = classification_report(
                 Y_test,
@@ -104,6 +104,12 @@ if __name__ == "__main__":
             )
 
             mlflow.log_param("model_name", model_name)
+            if model_name == "Polynomial Regresion":
+                mlflow.log_param("degree", params_pr["degree"])
+            elif model_name == "Logistic Regresion":
+                mlflow.log_param("C", params_lr["C"])
+                mlflow.log_param("solver", params_lr["solver"])
+                
             mlflow.log_metric("accuracy", report["accuracy"])
             mlflow.log_metric("recall_class_0", report["0"]["recall"])
             mlflow.log_metric("recall_class_1", report["1"]["recall"])
