@@ -87,6 +87,7 @@ if __name__ == "__main__":
         )
     ]
 
+    best_model = None
 
     tracking_uri = os.getenv("MLFLOW_TRACKING_URI", "http://127.0.0.1:8080") # Keeps the default value, allowing to change later if needed
     mlflow.set_tracking_uri(tracking_uri)
@@ -103,13 +104,22 @@ if __name__ == "__main__":
                 output_dict = True,
             )
 
+            score = report["weighted avg"]["f1-score"]
+
+            if best_model is None or score > best_model["score"]:
+                best_model = {
+                    "name": model_name,
+                    "run_id": run.info.run_id, 
+                    "score": score
+                }   
+
             mlflow.log_param("model_name", model_name)
             if model_name == "Polynomial Regresion":
                 mlflow.log_param("degree", params_pr["degree"])
             elif model_name == "Logistic Regresion":
                 mlflow.log_param("C", params_lr["C"])
                 mlflow.log_param("solver", params_lr["solver"])
-                
+
             mlflow.log_metric("accuracy", report["accuracy"])
             mlflow.log_metric("recall_class_0", report["0"]["recall"])
             mlflow.log_metric("recall_class_1", report["1"]["recall"])
@@ -120,14 +130,21 @@ if __name__ == "__main__":
 
             mlflow.sklearn.log_model(model, artifact_path = "model")
 
-            if model_name == "Polynomial Regresion":
-                registered_model = mlflow.register_model(
-                    model_uri = f"runs:/{run.info.run_id}/model",
-                    name = "spam-email-classifier",
-                )
+    if best_model is None:
+        raise Exception("No model was trained. Please check the training process.")
 
-                MlflowClient().set_registered_model_alias(
-                    name = "spam-email-classifier",
-                    alias = "champion",
-                    version = registered_model.version,
-                )
+    registered_model = mlflow.register_model(
+        model_uri = "runs:/{}/model".format(best_model["run_id"]),
+        name = "spam-email-classifier"
+    )
+
+    MlflowClient().set_registered_model_alias(
+        name = "spam-email-classifier",
+        alias = "champion",
+        version = registered_model.version
+    )
+
+    print("Registered {} as champion\n(weighted F1: {})".format(
+        best_model["name"], 
+        round(best_model["score"], 3)
+    ))
