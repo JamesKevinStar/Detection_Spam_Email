@@ -6,3 +6,4 @@
 .vscode/
 mlartifacts/
 mlflow.db
+venv/
